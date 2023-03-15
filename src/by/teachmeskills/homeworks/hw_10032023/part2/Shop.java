@@ -10,39 +10,25 @@ import java.util.List;
 public class Shop {
     private List<Product> list = new ArrayList<>();
 
-    public void addProduct(Product product) {
+    public void addProduct(Product product) throws EntityAlreadyExistsException {
         for (Product p : list) {
             if (p.getId() == product.getId()) {
-                try {
-                    throw new EntityAlreadyExistsException("Product exist.");
-                } catch (EntityAlreadyExistsException e) {
-                    System.out.println(e.getMessage());
-                    return;
-                }
+                throw new EntityAlreadyExistsException("Product exist.");
             }
         }
         list.add(product);
     }
 
-    public List<Product> getAllProducts() {
+    public List<Product> getAllProducts() throws EmptyProductListException {
         if (list.isEmpty()) {
-            try {
-                throw new EmptyProductListException("No products found.");
-            } catch (EmptyProductListException e) {
-                System.out.println(e.getMessage());
-            }
+            throw new EmptyProductListException("No products found.");
         }
         return list;
     }
 
-    public void deleteProduct(int id) {
+    public void deleteProduct(int id) throws EmptyProductListException, EntityNotFoundException {
         if (list.isEmpty()) {
-            try {
-                throw new EmptyProductListException("No products found.");
-            } catch (EmptyProductListException e) {
-                System.out.println(e.getMessage());
-                return;
-            }
+            throw new EmptyProductListException("No products found.");
         } else {
             for (Product p : list) {
                 if (p.getId() == id) {
@@ -50,22 +36,13 @@ public class Shop {
                     return;
                 }
             }
-
         }
-        try {
-            throw new EntityNotFoundException("Product with id " + id + " not found.");
-        } catch (EntityNotFoundException e) {
-            System.out.println(e.getMessage());
-        }
+        throw new EntityNotFoundException(String.format("Product with id %d not found.", id));
     }
 
-    public void updateProduct(int id, int newId, String newName, int newPrice) {
+    public void updateProduct(int id, int newId, String newName, int newPrice) throws EmptyProductListException, EntityNotFoundException {
         if (list.isEmpty()) {
-            try {
-                throw new EmptyProductListException("No products found.");
-            } catch (EmptyProductListException e) {
-                System.out.println(e.getMessage());
-            }
+            throw new EmptyProductListException("No products found.");
         } else {
             for (Product p : list) {
                 if (p.getId() == id) {
@@ -75,11 +52,7 @@ public class Shop {
                     return;
                 }
             }
-            try {
-                throw new EntityNotFoundException("Product with id " + id + " not found.");
-            } catch (EntityNotFoundException e) {
-                System.out.println(e.getMessage());
-            }
+            throw new EntityNotFoundException(String.format("Product with id %d not found.", id));
         }
     }
 }
