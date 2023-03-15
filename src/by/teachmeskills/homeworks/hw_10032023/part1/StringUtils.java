@@ -26,7 +26,7 @@ public class StringUtils {
         return up ? string.toUpperCase() : string.toLowerCase();
     }
 
-    public static String arithmeticExpression(String operand1, String operation, String operand2) {
+    public static String arithmeticExpression(String operand1, String operation, String operand2) throws ArithmeticException {
         StringBuilder stringBuilder = new StringBuilder();
         int result = 0;
         stringBuilder.append(operand1).append(" ").append(operation).append(" ").append(operand2).append(" = ");
@@ -39,7 +39,7 @@ public class StringUtils {
                     double division = (double) Integer.parseInt(operand1) / Integer.parseInt(operand2);
                     return stringBuilder.append(String.format("%.3f", division)).toString();
                 } else {
-                    return "На ноль делить нельзя!";
+                    throw new ArithmeticException("На ноль делить нельзя!");
                 }
             }
         }

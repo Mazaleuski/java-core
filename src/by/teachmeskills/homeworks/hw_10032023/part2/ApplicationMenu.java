@@ -1,5 +1,9 @@
 package by.teachmeskills.homeworks.hw_10032023.part2;
 
+import by.teachmeskills.homeworks.hw_10032023.part2.exceptions.EmptyProductListException;
+import by.teachmeskills.homeworks.hw_10032023.part2.exceptions.EntityAlreadyExistsException;
+import by.teachmeskills.homeworks.hw_10032023.part2.exceptions.EntityNotFoundException;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -21,7 +25,12 @@ public class ApplicationMenu {
             } else
                 switch (i) {
                     case 1 -> {
-                        if (shop.getAllProducts().size() == 0) {
+                        try {
+                            if (shop.getAllProducts().size() == 0) {
+                                break;
+                            }
+                        } catch (EmptyProductListException e) {
+                            System.out.println(e.getMessage());
                             break;
                         }
                         System.out.println("""
@@ -32,12 +41,17 @@ public class ApplicationMenu {
                         if (j < 1 || j > 2) {
                             System.out.println("Ошибка! Нет такого пункта!");
                         } else {
-                            List<Product> list = shop.getAllProducts();
+                            List<Product> list = null;
+                            try {
+                                list = shop.getAllProducts();
+                            } catch (EmptyProductListException e) {
+                                System.out.println(e.getMessage());
+                            }
                             list.sort(Comparator.comparingInt(Product::getPrice));
                             if (j == 1) {
                                 System.out.println(list);
                             } else {
-                                Collections.reverse(list);
+                                reverseList(list);
                                 System.out.println(list);
                             }
                         }
@@ -51,19 +65,35 @@ public class ApplicationMenu {
                         int id = scanner.nextInt();
                         String name = scanner.next();
                         int price = scanner.nextInt();
-                        shop.addProduct(new Product(id, name, price));
+                        try {
+                            shop.addProduct(new Product(id, name, price));
+                        } catch (EntityAlreadyExistsException e) {
+                            System.out.println(e.getMessage());
+                        }
                     }
                     case 3 -> {
-                        if (shop.getAllProducts().size() == 0) {
-                            break;
+                        try {
+                            if (shop.getAllProducts().size() == 0) {
+                                break;
+                            }
+                        } catch (EmptyProductListException e) {
+                            System.out.println(e.getMessage());
                         }
                         System.out.println("Введите id удаляемого товара:");
                         int id = scanner.nextInt();
-                        shop.deleteProduct(id);
+                        try {
+                            shop.deleteProduct(id);
+                        } catch (EmptyProductListException | EntityNotFoundException e) {
+                            System.out.println(e.getMessage());
+                        }
                     }
                     case 4 -> {
-                        if (shop.getAllProducts().size() == 0) {
-                            break;
+                        try {
+                            if (shop.getAllProducts().size() == 0) {
+                                break;
+                            }
+                        } catch (EmptyProductListException e) {
+                            System.out.println(e.getMessage());
                         }
                         System.out.println("""
                                 Введите id и параметры редактируемого товара:
@@ -75,7 +105,11 @@ public class ApplicationMenu {
                         int newId = scanner.nextInt();
                         String newName = scanner.next();
                         int newPrice = scanner.nextInt();
-                        shop.updateProduct(id, newId, newName, newPrice);
+                        try {
+                            shop.updateProduct(id, newId, newName, newPrice);
+                        } catch (EmptyProductListException | EntityNotFoundException e) {
+                            System.out.println(e.getMessage());
+                        }
                     }
                 }
         }
@@ -89,5 +123,9 @@ public class ApplicationMenu {
                 3 Удаление товара.
                 4 Редактирование товара.
                 5 Выход.""");
+    }
+
+    private void reverseList(List list) {
+        Collections.reverse(list);
     }
 }

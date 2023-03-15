@@ -7,9 +7,6 @@ public class Car {
     private int speed;
     private int price;
 
-    public Car() {
-    }
-
     public Car(String brand, int speed, int price) {
         this.brand = brand;
         this.speed = speed;
@@ -40,16 +37,12 @@ public class Car {
         this.price = price;
     }
 
-    public void start() {
+    public void start() throws CarStartException {
         int random = (int) (Math.random() * 20);
         if (random % 2 == 0) {
-            try {
-                throw new CarStartException();
-            } catch (CarStartException e) {
-                System.out.printf("Мотор автомобиля %s не запустился.\n", brand);
-            }
-        } else {
-            System.out.printf("Мотор автомобиля %s запустился.\n", brand);
+            throw new CarStartException(String.format("Мотор автомобиля %s не запустился.", brand));
         }
+        System.out.printf("Мотор автомобиля %s запустился.\n", brand);
     }
 }
+

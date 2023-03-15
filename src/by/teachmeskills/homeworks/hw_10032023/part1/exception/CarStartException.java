@@ -1,4 +1,7 @@
 package by.teachmeskills.homeworks.hw_10032023.part1.exception;
 
-public class CarStartException extends Exception{
+public class CarStartException extends Exception {
+    public CarStartException(String message) {
+        super(message);
+    }
 }
