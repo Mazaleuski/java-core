@@ -1,19 +1,21 @@
 package by.teachmeskills.homeworks.hw_17032023;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.FileWriter;
+import java.io.BufferedWriter;
 
-public class PalindromeFile {
+public class PalindromeUtil {
+    private static final String FILE_PALINDROMES = "data//palindromeStrings.txt.txt";
 
-    public static void main(String[] args) {
-        File file1 = new File("data", "strings.txt");
-        palindromeWrite(file1);
+    private PalindromeUtil() {
     }
 
-    public static void palindromeWrite(File file1) {
+    public static void writePalindromes(String fileName) {
         StringBuilder stringBuilder = new StringBuilder();
-        File file2 = new File("data", "palindromeStrings.txt");
-        try (BufferedReader br = new BufferedReader(new FileReader(file1));
-             BufferedWriter bw = new BufferedWriter(new FileWriter(file2))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName));
+             BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_PALINDROMES))) {
             while (br.ready()) {
                 stringBuilder.append(br.readLine()).append(" ");
             }

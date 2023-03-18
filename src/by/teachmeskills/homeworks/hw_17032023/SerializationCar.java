@@ -1,6 +1,10 @@
 package by.teachmeskills.homeworks.hw_17032023;
 
-import java.io.*;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.IOException;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 
 public class SerializationCar {
     private static final String FILE_NAME = "data//car.dat";
@@ -19,7 +23,5 @@ public class SerializationCar {
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-
-
     }
 }

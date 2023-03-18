@@ -1,16 +1,22 @@
 package by.teachmeskills.homeworks.hw_17032023;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.FileWriter;
+import java.io.BufferedWriter;
 
 import static by.teachmeskills.homeworks.hw_17032023.TextFormatter.isPalindromeString;
 import static by.teachmeskills.homeworks.hw_17032023.TextFormatter.stringLength;
 
 public class Main {
+    private static final String FILE_IN = "data\\textIn.txt";
+    private static final String FILE_OUT = "data\\textOut.txt";
+
     public static void main(String[] args) {
-        File file = new File("data\\textIn.txt");
         StringBuilder text = new StringBuilder();
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
-             BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File("data", "textOut.txt")))) {
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(FILE_IN));
+             BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(FILE_OUT))) {
             while (bufferedReader.ready()) {
                 text.append(bufferedReader.readLine());
             }

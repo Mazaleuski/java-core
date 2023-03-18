@@ -2,6 +2,9 @@ package by.teachmeskills.homeworks.hw_17032023;
 
 public class TextFormatter {
 
+    private TextFormatter() {
+    }
+
     public static int stringLength(String string) {
         String s = string.replaceAll("\\p{Punct}", "");
         String[] strings = s.split(" ");
