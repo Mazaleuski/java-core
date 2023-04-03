@@ -16,16 +16,12 @@ public class MyArrayList<E> {
     }
 
     public E get(int index) {
-        if (index >= size || index < 0) {
-            throw new IndexOutOfBoundsException("Index: " + index + ", Size " + size());
-        }
+        indexCheck(index);
         return (E) elements[index];
     }
 
     public void add(int index, E element) {
-        if (index > size || index < 0) {
-            throw new IndexOutOfBoundsException("Index: " + index + ", Size " + size());
-        }
+        indexCheck(index);
         ensureCapacity();
         for (int i = size - 1; i >= index; i--) {
             elements[i + 1] = elements[i];
@@ -35,9 +31,7 @@ public class MyArrayList<E> {
     }
 
     public E remove(int index) {
-        if (index >= size || index < 0) {
-            throw new IndexOutOfBoundsException("Index: " + index + ", Size " + index);
-        }
+        indexCheck(index);
         Object item = elements[index];
         for (int i = index; i < size - 1; i++) {
             elements[i] = elements[i + 1];
@@ -85,6 +79,12 @@ public class MyArrayList<E> {
             }
         }
         return -1;
+    }
+
+    private void indexCheck(int index) {
+        if (index >= size || index < 0) {
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size " + size());
+        }
     }
 }
 
