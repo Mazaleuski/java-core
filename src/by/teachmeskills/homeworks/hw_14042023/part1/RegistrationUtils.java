@@ -4,23 +4,24 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.ArrayList;
+
 
 public class RegistrationUtils {
-    private static String FILE_CUSTOMERS = "D:\\files\\users.txt";
-    private static List<String> customers = new ArrayList<>();
-    private static List<String> dataBaseCustomers = new ArrayList<>();
+    private static final String FILE_CUSTOMERS_PATH = "D:\\files\\users.txt";
+    private static Map<String, String> customers = new HashMap<>();
+    private static List<String> databaseCustomers = new ArrayList<>();
 
     private RegistrationUtils() {
     }
 
-    public static String getFileCustomers() {
-        return FILE_CUSTOMERS;
+    public static String getFileCustomersPath() {
+        return FILE_CUSTOMERS_PATH;
     }
 
     private static void readUserData() {
@@ -31,45 +32,48 @@ public class RegistrationUtils {
             if (Objects.equals(s, "0")) {
                 break;
             } else {
-                customers.add(s);
+                String[] strings = s.split(" ");
+                if (strings.length != 6) {
+                    System.out.printf("Invalid data '%s.'\n", s);
+                } else {
+                    customers.put("name", strings[0]);
+                    customers.put("surname", strings[1]);
+                    customers.put("second_name", strings[2]);
+                    customers.put("gender", strings[3]);
+                    customers.put("phone/mail", strings[4]);
+                    customers.put("birthday", strings[5]);
+                    validateData();
+                }
             }
         }
     }
 
-    private static void validateData(String s) {
-        String[] strings = s.split(" ");
-        if (strings.length != 6) {
-            System.out.printf("Invalid data '%s.'\n", s);
-        } else {
-            Map<String, String> data = new HashMap<>();
-            data.put("name", strings[0] + strings[1] + strings[2]);
-            data.put("phone/mail", strings[4]);
-            data.put("birthday", strings[5]);
-            class Validator {
-                boolean isName() {
-                    return !data.get("name").isBlank();
-                }
-
-                boolean isDate() {
-                    return data.get("birthday").matches("^\\d{4}-\\d{2}-\\d{2}$");
-                }
-
-                boolean isTelephoneOrMail() {
-                    return data.get("phone/mail").startsWith("+37529") || data.get("phone/mail").startsWith("+37525")
-                            || data.get("phone/mail").startsWith("+37533") || data.get("phone/mail").startsWith("+37544")
-                            || data.get("phone/mail").matches("^(.+)@(\\S+)$");
-                }
+    private static void validateData() {
+        class Validator {
+            boolean isName() {
+                return !customers.get("name").isBlank();
             }
-            Validator validator = new Validator();
-            if (validator.isName() && validator.isDate() && validator.isTelephoneOrMail()) {
-                dataBaseCustomers.add(s);
+
+            boolean isDate() {
+                return customers.get("birthday").matches("^\\d{4}-\\d{2}-\\d{2}$");
             }
+
+            boolean isTelephoneOrMail() {
+                return customers.get("phone/mail").startsWith("+37529") || customers.get("phone/mail").startsWith("+37525")
+                        || customers.get("phone/mail").startsWith("+37533") || customers.get("phone/mail").startsWith("+37544")
+                        || customers.get("phone/mail").matches("^(.+)@(\\S+)$");
+            }
+        }
+        Validator validator = new Validator();
+        if (validator.isName() && validator.isDate() && validator.isTelephoneOrMail()) {
+            String customer = customers.get("name") + " " + customers.get("surname") + " " + customers.get("second_name")
+                    + " " + customers.get("gender") + " " + customers.get("phone/mail") + " " + customers.get("birthday");
+            databaseCustomers.add(customer);
         }
     }
 
     public static void createUsersFile() throws IOException {
         readUserData();
-        customers.forEach(RegistrationUtils::validateData);
-        Files.write(Path.of(FILE_CUSTOMERS), dataBaseCustomers, StandardOpenOption.APPEND);
+        Files.write(Path.of(FILE_CUSTOMERS_PATH), databaseCustomers, StandardOpenOption.APPEND);
     }
 }
