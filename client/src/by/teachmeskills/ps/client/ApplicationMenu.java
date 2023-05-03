@@ -13,7 +13,7 @@ public class ApplicationMenu {
     Scanner scanner = new Scanner(System.in);
     MerchantService ms = new MerchantService();
 
-    public void start() {
+    public void start() throws MerchantNotFoundException {
         while (true) {
             printMenu();
             int i = scanner.nextInt();
@@ -33,7 +33,7 @@ public class ApplicationMenu {
                                 System.out.println(e.getMessage());
                             }
                         } else {
-                            System.out.println("Incorrect id.");
+                            throw new IllegalArgumentException("Incorrect ID");
                         }
                     }
                     case 2 -> {
@@ -45,7 +45,7 @@ public class ApplicationMenu {
                             ms.addBankAccount(id, num);
                         } catch (IOException | MerchantNotFoundException e) {
                             System.out.println(e.getMessage());
-                            System.out.println("Bank account with " + num + " not+ added.");
+                            System.out.println("Bank account with " + num + " not added.");
                         }
                     }
                     case 3 -> {
@@ -73,19 +73,15 @@ public class ApplicationMenu {
                     case 5 -> {
                         System.out.println("Enter merchant id:");
                         String id = scanner.next();
-                        if (id.matches("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$")) {
-                            try {
-                                System.out.print(ms.getMerchantById(id));
-                            } catch (MerchantNotFoundException e) {
-                                System.out.println(e.getMessage());
-                            }
-                        } else {
-                            System.out.println("Incorrect id.");
+                        try {
+                            System.out.print(ms.getMerchantById(id));
+                        } catch (MerchantNotFoundException e) {
+                            System.out.println(e.getMessage());
                         }
                     }
                     case 6 -> {
                         if (ms.getMerchants().size() == 0) {
-                            System.out.println("No merchants in system.");
+                            throw new MerchantNotFoundException("No merchants in system.");
                         } else {
                             ms.getMerchants().forEach(System.out::print);
                         }
@@ -111,7 +107,7 @@ public class ApplicationMenu {
                                 System.out.println(e.getMessage());
                             }
                         } else {
-                            System.out.println("Incorrect id.");
+                            throw new IllegalArgumentException("Incorrect ID");
                         }
                     }
                 }
