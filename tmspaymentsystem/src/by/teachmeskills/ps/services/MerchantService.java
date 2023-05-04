@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static by.teachmeskills.ps.services.interfaces.FilesPathes.BANK_ACCOUNT_PATH;
@@ -51,60 +50,48 @@ public class MerchantService {
         return bankAccountAtomicReference.get();
     }
 
-    public List<BankAccount> getMerchantBankAccounts(String id) throws NoBankAccountsFoundException {
-        Optional<Merchant> o = merchants.stream().filter(m -> m.getId().equals(id)).findFirst();
-        AtomicReference<List<BankAccount>> bankAccounts = new AtomicReference<>();
-        o.ifPresentOrElse(m -> {
-            m.getBankAccounts().sort(Comparator.comparing(BankAccount::getCreatedAt));
-            m.getBankAccounts().sort(Comparator.comparing(BankAccount::getStatus));
-            bankAccounts.set(m.getBankAccounts());
-        }, () -> {
-            try {
-                throw new NoBankAccountsFoundException("Merchant don't have bank accounts.");
-            } catch (NoBankAccountsFoundException e) {
-                System.out.println(e.getMessage());
-            }
-        });
-        return bankAccounts.get();
+    public List<BankAccount> getMerchantBankAccounts(String id) throws NoBankAccountsFoundException, MerchantNotFoundException {
+        Merchant merch = merchants.stream().filter(m -> m.getId().equals(id))
+                .findAny().orElseThrow(() -> new MerchantNotFoundException("Merchant with " + id + " not found."));
+        if (merch.getBankAccounts().size() == 0) {
+            throw new NoBankAccountsFoundException("Merchant don't have bank accounts.");
+        } else {
+            merch.getBankAccounts().sort(Comparator.comparing(BankAccount::getCreatedAt));
+            merch.getBankAccounts().sort(Comparator.comparing(BankAccount::getStatus));
+        }
+        return merch.getBankAccounts();
     }
 
     public void updateBankAccount(String accountNum, String newAccountNum) throws
-            IllegalArgumentException, BankAccountNotFoundException {
+            BankAccountNotFoundException, RuntimeException {
         if (!accountNum.matches("[0-9a-zA-Z]{10}}") && !newAccountNum.matches("[0-9a-zA-Z]{10}")) {
             throw new IllegalArgumentException("Incorrect account number.");
         }
         merchants.forEach(m -> {
             Optional<BankAccount> o = m.getBankAccounts().stream().filter(b -> b.getAccountNumber().equals(accountNum)).findFirst();
-            if (o.isEmpty()) {
-                try {
-                    throw new BankAccountNotFoundException("Not found bank account.");
-                } catch (BankAccountNotFoundException e) {
-                    System.out.println(e.getMessage());
-                }
-            } else {
-                o.get().setAccountNumber(newAccountNum);
+            o.ifPresentOrElse(ba -> {
+                ba.setAccountNumber(newAccountNum);
                 try {
                     writeBankAccountsToTxt();
                 } catch (IOException e) {
-                    System.out.println(e.getMessage());
+                    throw new RuntimeException(e);
                 }
-            }
+            }, () -> {
+                throw new RuntimeException("Not found bank account.");
+            });
         });
     }
 
     public void deleteBankAccount(String id, String accountNum) throws
-            BankAccountNotFoundException, IllegalArgumentException, IOException, MerchantNotFoundException {
+            BankAccountNotFoundException, IllegalArgumentException, MerchantNotFoundException, IOException {
         Merchant m = getMerchantById(id);
         if (!accountNum.matches("[0-9a-zA-Z]{10}")) {
             throw new IllegalArgumentException("Incorrect account number.");
         }
-        Optional<BankAccount> o = m.getBankAccounts().stream().filter(b -> b.getAccountNumber().equals(accountNum)).findFirst();
-        if (o.isEmpty()) {
-            throw new BankAccountNotFoundException("Not found bank account.");
-        } else {
-            m.getBankAccounts().remove(o.get());
-            writeBankAccountsToTxt();
-        }
+        BankAccount bankAccount = m.getBankAccounts().stream().filter(b -> b.getAccountNumber()
+                .equals(accountNum)).findFirst().orElseThrow(() -> new BankAccountNotFoundException("Not found bank account."));
+        m.getBankAccounts().remove(bankAccount);
+        writeBankAccountsToTxt();
     }
 
     public Merchant createMerchant(Merchant merchant) throws IOException {
@@ -123,16 +110,9 @@ public class MerchantService {
     }
 
     public boolean deleteMerchant(String id) throws MerchantNotFoundException, IOException {
-        Optional<Merchant> merch = merchants.stream().filter(m -> m.getId().equals(id)).findFirst();
-        merch.ifPresentOrElse(m -> {
-            merchants.remove(m);
-        }, () -> {
-            try {
-                throw new MerchantNotFoundException("Merchant with " + id + " not found");
-            } catch (MerchantNotFoundException e) {
-                System.out.println(e.getMessage());
-            }
-        });
+        Merchant merch = merchants.stream().filter(m -> m.getId().equals(id)).findFirst()
+                .orElseThrow(() -> new MerchantNotFoundException("Merchant with " + id + " not found"));
+        merchants.remove(merch);
         writeMerchantsToTxt();
         writeBankAccountsToTxt();
         return true;

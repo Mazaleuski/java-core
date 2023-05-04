@@ -33,7 +33,7 @@ public class ApplicationMenu {
                                 System.out.println(e.getMessage());
                             }
                         } else {
-                            throw new IllegalArgumentException("Incorrect ID");
+                            throw new IllegalArgumentException("Incorrect ID.");
                         }
                     }
                     case 2 -> {
@@ -55,7 +55,7 @@ public class ApplicationMenu {
                         String newNum = scanner.next();
                         try {
                             ms.updateBankAccount(num, newNum);
-                        } catch (BankAccountNotFoundException e) {
+                        } catch (BankAccountNotFoundException | RuntimeException e) {
                             System.out.println(e.getMessage());
                         }
                     }
@@ -66,7 +66,8 @@ public class ApplicationMenu {
                         String num = scanner.next();
                         try {
                             ms.deleteBankAccount(id, num);
-                        } catch (BankAccountNotFoundException | IOException | MerchantNotFoundException e) {
+                        } catch (RuntimeException | MerchantNotFoundException | BankAccountNotFoundException |
+                                 IOException e) {
                             System.out.println(e.getMessage());
                         }
                     }
