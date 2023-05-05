@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static by.teachmeskills.ps.services.interfaces.FilesPathes.BANK_ACCOUNT_PATH;
@@ -63,7 +64,8 @@ public class MerchantService {
     }
 
     public void updateBankAccount(String accountNum, String newAccountNum) throws
-            BankAccountNotFoundException, RuntimeException {
+            BankAccountNotFoundException, IllegalArgumentException {
+        AtomicBoolean aBoolean = new AtomicBoolean(false);
         if (!accountNum.matches("[0-9a-zA-Z]{10}}") && !newAccountNum.matches("[0-9a-zA-Z]{10}")) {
             throw new IllegalArgumentException("Incorrect account number.");
         }
@@ -74,12 +76,15 @@ public class MerchantService {
                 try {
                     writeBankAccountsToTxt();
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    System.out.println("File write error.");
                 }
             }, () -> {
-                throw new RuntimeException("Not found bank account.");
+                aBoolean.set(true);
             });
         });
+        if (aBoolean.get()) {
+            throw new BankAccountNotFoundException("Not found bank account.");
+        }
     }
 
     public void deleteBankAccount(String id, String accountNum) throws
@@ -105,8 +110,7 @@ public class MerchantService {
     }
 
     public Merchant getMerchantById(String id) throws MerchantNotFoundException {
-        Optional<Merchant> merch = merchants.stream().filter(m -> m.getId().equals(id)).findFirst();
-        return merch.orElseThrow();
+        return merchants.stream().filter(m -> m.getId().equals(id)).findFirst().orElseThrow();
     }
 
     public boolean deleteMerchant(String id) throws MerchantNotFoundException, IOException {
