@@ -63,28 +63,21 @@ public class MerchantService {
         return merch.getBankAccounts();
     }
 
-    public void updateBankAccount(String accountNum, String newAccountNum) throws
-            BankAccountNotFoundException, IllegalArgumentException {
-        AtomicBoolean aBoolean = new AtomicBoolean(false);
+    public void updateBankAccount(String accountNum, String newAccountNum) throws IllegalArgumentException {
         if (!accountNum.matches("[0-9a-zA-Z]{10}}") && !newAccountNum.matches("[0-9a-zA-Z]{10}")) {
             throw new IllegalArgumentException("Incorrect account number.");
         }
         merchants.forEach(m -> {
-            Optional<BankAccount> o = m.getBankAccounts().stream().filter(b -> b.getAccountNumber().equals(accountNum)).findFirst();
-            o.ifPresentOrElse(ba -> {
-                ba.setAccountNumber(newAccountNum);
-                try {
-                    writeBankAccountsToTxt();
-                } catch (IOException e) {
-                    System.out.println("File write error.");
-                }
-            }, () -> {
-                aBoolean.set(true);
-            });
+            try {
+                BankAccount bankAccount = m.getBankAccounts().stream().filter(b -> b.getAccountNumber().equals(accountNum)).findFirst().orElseThrow(() -> new BankAccountNotFoundException("Bank account not found"));
+                bankAccount.setAccountNumber(newAccountNum);
+                writeBankAccountsToTxt();
+            } catch (BankAccountNotFoundException e) {
+                System.out.println("Bank account for merchant not found");
+            } catch (IOException e) {
+                System.out.println("Error occurred during update bank in file");
+            }
         });
-        if (aBoolean.get()) {
-            throw new BankAccountNotFoundException("Not found bank account.");
-        }
     }
 
     public void deleteBankAccount(String id, String accountNum) throws

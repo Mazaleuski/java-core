@@ -55,7 +55,7 @@ public class ApplicationMenu {
                         String newNum = scanner.next();
                         try {
                             ms.updateBankAccount(num, newNum);
-                        } catch (BankAccountNotFoundException | IllegalArgumentException e) {
+                        } catch (IllegalArgumentException e) {
                             System.out.println(e.getMessage());
                         }
                     }
