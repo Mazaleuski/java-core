@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!DOCTYPE employees [
+        <!ELEMENT employees (employee)*>
+        <!ELEMENT employee (firstName|lastName|position|department|workExperience)*>
+        <!ELEMENT firstName (#PCDATA)>
+        <!ELEMENT lastName (#PCDATA)>
+        <!ELEMENT position (#PCDATA)>
+        <!ELEMENT department (#PCDATA)>
+        <!ELEMENT workExperience (#PCDATA)>
+        ]>
+<employees>
+    <employee>
+        <firstName>John</firstName>
+        <lastName>Galt</lastName>
+        <position>Doctor</position>
+        <department>Surgery</department>
+        <workExperience>12</workExperience>
+    </employee>
+    <employee>
+        <firstName>Sara</firstName>
+        <lastName>Conor</lastName>
+        <position>Nurse</position>
+        <department>Surgery</department>
+        <workExperience>5</workExperience>
+    </employee>
+    <employee>
+        <firstName>Kira</firstName>
+        <lastName>Argunova</lastName>
+        <position>Assistant</position>
+        <department>Laboratory</department>
+        <workExperience>21</workExperience>
+    </employee>
+</employees>

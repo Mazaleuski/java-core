@@ -1,4 +1,5 @@
 .idea/
 data/
-core.iml
+*.iml
 out/
+target/
