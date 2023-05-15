@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="firstName" type="xs:string"/>
+    <xs:element name="lastName" type="xs:string"/>
+    <xs:element name="position" type="xs:string"/>
+    <xs:element name="department" type="xs:string"/>
+    <xs:element name="workExperience" type="xs:byte"/>
+    <xs:element name="employee">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="firstName"/>
+                <xs:element ref="lastName"/>
+                <xs:element ref="position"/>
+                <xs:element ref="department"/>
+                <xs:element ref="workExperience"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="employees">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="employee" maxOccurs="unbounded" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
