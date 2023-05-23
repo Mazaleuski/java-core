@@ -2,8 +2,10 @@ package by.teachmeskills.homeworks.hw_05052023;
 
 public class Main {
     public static void main(String[] args) {
-        QueueClients store = new QueueClients();
-        new StreetThread(store).start();
-        new OwnerShopThread(store).start();
+        JewelryShop jewShop = new JewelryShop();
+        for (int i = 1; i < 5; i++) {
+            JewelryShop.getList().add(new Client("Client " + i));
+        }
+        new OwnerShopThread(jewShop).start();
     }
 }

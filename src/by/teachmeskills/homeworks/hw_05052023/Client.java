@@ -9,7 +9,7 @@ public class Client extends Thread {
     public void run() {
         System.out.println(currentThread().getName() + " ready for shopping.");
         try {
-            sleep((long) (Math.random() * 10000));
+            sleep((int) (Math.random() * 8 + 1) * 1000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
